@@ -1,12 +1,13 @@
 package com.deepak.studentmanagementsystem.controller;
 
+import com.deepak.studentmanagementsystem.dto.StudentUpdateRequest;
 import com.deepak.studentmanagementsystem.entity.Student;
 import com.deepak.studentmanagementsystem.service.StudentService;
+import com.deepak.studentmanagementsystem.dto.StudentCreateRequest;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,9 @@ public class StudentController {
 
 
     @GetMapping("/students/{rollNo}")
-    public ResponseEntity<Student> getStudentByRollNo(@PathVariable String rollNo){
+    public ResponseEntity<Student> getStudentByRollNo(
+            @PathVariable String rollNo){
+
          Optional<Student> student = studentService.getStudentByRollNo(rollNo);
 
          if(student.isPresent()){
@@ -42,20 +45,39 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    public ResponseEntity<Student> addStudent(@Valid @RequestBody Student student){
-        Student student1 = studentService.addStudent(student);
+    public ResponseEntity<Student> addStudent(
+            @Valid @RequestBody StudentCreateRequest request){
+        Student s = new Student();
+        s.setRollNo(request.getRollNo());
+        s.setName(request.getName());
+        s.setEmail(request.getEmail());
+        s.setPhoneNo(request.getPhoneNo());
+        s.setDepartmentId(request.getDepartmentId());
+        Student student1 = studentService.addStudent(s);
         return ResponseEntity.status(HttpStatus.CREATED).body(student1);
+
     }
 
     @PutMapping("/students/{rollNo}")
     public ResponseEntity<Student> updateStudent(
-            @PathVariable String rollNo,@Valid @RequestBody Student updatedStudent){
-        Student student = studentService.updateStudent(rollNo, updatedStudent);
+            @PathVariable String rollNo,@Valid @RequestBody StudentUpdateRequest request){
+
+        Student s = new Student();
+
+        s.setName(request.getName());
+        s.setEmail(request.getEmail());
+        s.setPhoneNo(request.getPhoneNo());
+        s.setDepartmentId(request.getDepartmentId());
+
+        Student student = studentService.updateStudent(rollNo, s);
         return ResponseEntity.status(HttpStatus.OK).body(student);
+
     }
 
     @DeleteMapping("/students/{rollNo}")
-    public ResponseEntity<Void> deleteStudentByRollNo(@PathVariable String rollNo){
+    public ResponseEntity<Void> deleteStudentByRollNo(
+            @PathVariable String rollNo){
+
         studentService.deleteStudentByRollNo(rollNo);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
