@@ -4,6 +4,9 @@ import com.deepak.studentmanagementsystem.entity.Student;
 import com.deepak.studentmanagementsystem.service.StudentService;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,17 +42,21 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    public Student addStudent(@Valid @RequestBody Student student){
-        return studentService.addStudent(student);
+    public ResponseEntity<Student> addStudent(@Valid @RequestBody Student student){
+        Student student1 = studentService.addStudent(student);
+        return ResponseEntity.status(HttpStatus.CREATED).body(student1);
     }
 
     @PutMapping("/students/{rollNo}")
-    public Student updateStudent(@PathVariable String rollNo,@Valid @RequestBody Student updatedStudent){
-        return studentService.updateStudent(rollNo, updatedStudent);
-    }
-    @DeleteMapping("/students/{rollNo}")
-    public void deleteStudentByRollNo(@PathVariable String rollNo){
-        studentService.deleteStudentByRollNo(rollNo);
+    public ResponseEntity<Student> updateStudent(
+            @PathVariable String rollNo,@Valid @RequestBody Student updatedStudent){
+        Student student = studentService.updateStudent(rollNo, updatedStudent);
+        return ResponseEntity.status(HttpStatus.OK).body(student);
     }
 
+    @DeleteMapping("/students/{rollNo}")
+    public ResponseEntity<Void> deleteStudentByRollNo(@PathVariable String rollNo){
+        studentService.deleteStudentByRollNo(rollNo);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
