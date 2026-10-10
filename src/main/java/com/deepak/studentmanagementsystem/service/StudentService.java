@@ -20,8 +20,15 @@ public class StudentService {
         return studentRepository.findAll();
     }
 
-    public Optional<Student> getStudentByRollNo(String rollNo){
-        return studentRepository.findById(rollNo);
+    public Student getStudentByRollNo(String rollNo){
+        Optional<Student> exist = studentRepository.findById(rollNo);
+
+        if(exist.isPresent()){
+            return exist.get();
+        }
+        else{
+            throw new StudentNotFoundException("The Student with Roll Number " + rollNo + " is Not Found");
+        }
     }
 
     public Student addStudent(Student student){
