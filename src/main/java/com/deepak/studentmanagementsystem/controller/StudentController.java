@@ -3,6 +3,7 @@ package com.deepak.studentmanagementsystem.controller;
 import com.deepak.studentmanagementsystem.dto.StudentResponse;
 import com.deepak.studentmanagementsystem.dto.StudentUpdateRequest;
 import com.deepak.studentmanagementsystem.entity.Student;
+import com.deepak.studentmanagementsystem.mapper.StudentMapper;
 import com.deepak.studentmanagementsystem.service.StudentService;
 import com.deepak.studentmanagementsystem.dto.StudentCreateRequest;
 
@@ -21,13 +22,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
+import javax.swing.plaf.synth.SynthTableUI;
+
 @RestController
 public class StudentController {
 
     private final StudentService studentService;
+    private final StudentMapper studentMapper;
 
-    public StudentController(StudentService studentService){
+    public StudentController(StudentService studentService, StudentMapper studentMapper){
+
         this.studentService = studentService;
+        this.studentMapper = studentMapper;
+
     }
     @GetMapping("/students")
     public List<StudentResponse> getAllStudents(){
@@ -38,7 +45,7 @@ public class StudentController {
 
         for(Student student : students){
 
-            responses.add(toStudentResponse(student));
+            responses.add(studentMapper.toStudentResponse(student));
         }
         return responses;
     }
@@ -50,7 +57,7 @@ public class StudentController {
 
          Student student = studentService.getStudentByRollNo(rollNo);
 
-         StudentResponse response = toStudentResponse(student);
+         StudentResponse response = studentMapper.toStudentResponse(student);
 
          return ResponseEntity.status(HttpStatus.OK).body(response);
 
@@ -60,17 +67,11 @@ public class StudentController {
     public ResponseEntity<StudentResponse> addStudent(
             @Valid @RequestBody StudentCreateRequest request){
 
-        Student studentEntity = new Student();
-
-        studentEntity.setRollNo(request.getRollNo());
-        studentEntity.setName(request.getName());
-        studentEntity.setEmail(request.getEmail());
-        studentEntity.setPhoneNo(request.getPhoneNo());
-        studentEntity.setDepartmentId(request.getDepartmentId());
+        Student studentEntity = studentMapper.FromStudentCreateRequestToStudent(request);
 
         Student savedStudent = studentService.addStudent(studentEntity);
 
-        StudentResponse response = toStudentResponse(savedStudent);
+        StudentResponse response = studentMapper.toStudentResponse(savedStudent);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
@@ -89,7 +90,7 @@ public class StudentController {
 
         Student student = studentService.updateStudent(rollNo, s);
 
-        StudentResponse response = toStudentResponse(student);
+        StudentResponse response = studentMapper.toStudentResponse(student);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
@@ -103,16 +104,4 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    private StudentResponse toStudentResponse(Student student){
-
-        StudentResponse response = new StudentResponse();
-
-        response.setRollNo(student.getRollNo());
-        response.setName(student.getName());
-        response.setEmail(student.getEmail());
-        response.setPhoneNo(student.getPhoneNo());
-        response.setDepartmentId(student.getDepartmentId());
-
-        return response;
-    }
 }
