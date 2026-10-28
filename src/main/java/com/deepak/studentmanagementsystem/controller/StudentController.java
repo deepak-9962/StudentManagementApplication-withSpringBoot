@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.ResponseEntity;
@@ -79,18 +80,17 @@ public class StudentController {
 
     @PutMapping("/students/{rollNo}")
     public ResponseEntity<StudentResponse> updateStudent(
-            @PathVariable String rollNo,@Valid @RequestBody StudentUpdateRequest request){
+            @PathVariable String rollNo,
+            @Valid @RequestBody StudentUpdateRequest request){
 
-        Student s = new Student();
+        Student existingStudent = studentService.getStudentByRollNo(rollNo);
 
-        s.setName(request.getName());
-        s.setEmail(request.getEmail());
-        s.setPhoneNo(request.getPhoneNo());
-        s.setDepartmentId(request.getDepartmentId());
+        Student student = studentMapper.FromStudentUpdateRequestToStudent(request, existingStudent);
 
-        Student student = studentService.updateStudent(rollNo, s);
+        Student savedStudent = studentService.updateStudent(rollNo, student);
 
-        StudentResponse response = studentMapper.toStudentResponse(student);
+        StudentResponse response = studentMapper.toStudentResponse(savedStudent);
+
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
 

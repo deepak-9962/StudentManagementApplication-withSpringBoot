@@ -1,6 +1,7 @@
 package com.deepak.studentmanagementsystem.mapper;
 
 import com.deepak.studentmanagementsystem.dto.StudentCreateRequest;
+import com.deepak.studentmanagementsystem.dto.StudentUpdateRequest;
 import org.springframework.stereotype.Component;
 import com.deepak.studentmanagementsystem.dto.StudentResponse;
 import com.deepak.studentmanagementsystem.entity.Student;
@@ -12,7 +13,6 @@ public class StudentMapper {
 
         StudentResponse response = new StudentResponse();
 
-        response.setRollNo(student.getRollNo());
         response.setName(student.getName());
         response.setEmail(student.getEmail());
         response.setPhoneNo(student.getPhoneNo());
@@ -25,6 +25,17 @@ public class StudentMapper {
         Student student = new Student();
 
         student.setRollNo(request.getRollNo());
+        student.setName(request.getName());
+        student.setEmail(request.getEmail());
+        student.setPhoneNo(request.getPhoneNo());
+        student.setDepartmentId(request.getDepartmentId());
+
+        return student;
+    }
+
+    public Student FromStudentUpdateRequestToStudent(StudentUpdateRequest request, Student student){
+
+
         student.setName(request.getName());
         student.setEmail(request.getEmail());
         student.setPhoneNo(request.getPhoneNo());
