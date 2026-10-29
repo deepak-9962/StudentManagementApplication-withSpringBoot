@@ -13,6 +13,7 @@ public class StudentMapper {
 
         StudentResponse response = new StudentResponse();
 
+        response.setRollNo(student.getRollNo());
         response.setName(student.getName());
         response.setEmail(student.getEmail());
         response.setPhoneNo(student.getPhoneNo());
